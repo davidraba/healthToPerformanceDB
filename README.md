@@ -337,6 +337,25 @@ type data\tinydb.json
 python -c "from tinydb import TinyDB; db = TinyDB('data/tinydb.json'); print(db.all())"
 ```
 
+## Validación JSON Schema
+
+Cada recurso se valida en dos capas:
+
+1. **Pydantic** — validación de tipos Python y estructura de datos
+2. **JSON Schema (Draft 2020-12)** — validación generada automáticamente desde los modelos Pydantic
+
+La validación JSON Schema se puede consultar como endpoint público:
+
+```bash
+# Obtener schema de un tipo de recurso
+curl http://localhost:8000/resources/schemas/icarAnimalCoreResource
+
+# Schema de un nuevo tipo
+curl http://localhost:8000/resources/schemas/icarReproHeatEventResource
+```
+
+Si el payload no cumple el JSON Schema, la API responde con `422` y los errores de validación en `detail`.
+
 ## Limitaciones conocidas
 
 - **TinyDB** no está diseñado para producción con alto volumen (sin concurrencia, sin índices reales)
@@ -349,9 +368,7 @@ python -c "from tinydb import TinyDB; db = TinyDB('data/tinydb.json'); print(db.
 
 ## Próximos pasos
 
-- [ ] Soportar todos los resource types del catálogo ADE v1.5
 - [ ] Implementar las enumeraciones ICAR (`AnimalSpecieType`, `AnimalGenderType`, etc.) como `enum` de Python
-- [ ] Añadir validación mediante JSON Schema
 - [ ] Soft delete mediante `meta.isDeleted`
 - [ ] Endpoints de exportación (JSON, GeoJSON, Excel)
 - [ ] Autenticación mediante API key

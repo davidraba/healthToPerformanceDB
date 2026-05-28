@@ -60,6 +60,16 @@ def get_resource_types():
     return {"resource_types": list_registered_types()}
 
 
+@router.get("/schemas/{resource_type}")
+def get_resource_schema(resource_type: str):
+    from app.schemas.json_validator import get_json_schema
+
+    schema = get_json_schema(resource_type)
+    if schema is None:
+        raise HTTPException(404, f"No JSON Schema for resource type: {resource_type}")
+    return schema
+
+
 @router.get("/{internal_id}")
 def get_resource(internal_id: str, resourceType: str = Query(...)):
     item = crud_service.get_by_id(resourceType, internal_id)
