@@ -370,7 +370,23 @@ curl -X POST http://localhost:8000/group-movements \
 curl http://localhost:8000/group-movements/by-location/es.rea/ES430000001
 ```
 
-## Tests (31 tests)
+### Exportación
+
+```bash
+# Exportar todos los recursos como JSON
+curl -o export.json http://localhost:8000/exports/json
+
+# Exportar filtrando por tipo de recurso
+curl -o animales.json "http://localhost:8000/exports/json?resourceType=icarAnimalCoreResource"
+
+# Exportar como GeoJSON (con geometría Point si hay coordenadas)
+curl -o export.geojson http://localhost:8000/exports/geojson
+
+# Exportar GeoJSON por ubicación y rango de fechas
+curl -o lote.geojson "http://localhost:8000/exports/geojson?locationScheme=es.rea&locationId=ES430000001&fromDate=2026-01-01&toDate=2026-12-31"
+```
+
+## Tests (40 tests)
 
 ```bash
 pytest tests/ -v
@@ -383,6 +399,7 @@ pytest tests/ -v
 | `test_generic_resources.py` | 5 | CRUD genérico, tipos, validación resourceType |
 | `test_new_models.py` | 8 | Funcionalidad nuevos modelos y routers |
 | `test_jsonschema.py` | 9 | Validación JSON Schema, endpoint /schemas |
+| `test_exports.py` | 9 | Exportación JSON y GeoJSON con filtros |
 
 ## Estructura del proyecto
 
@@ -390,7 +407,7 @@ pytest tests/ -v
 healthToPerformanceDB/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py                  # Punto de entrada FastAPI (14 routers)
+│   ├── main.py                  # Punto de entrada FastAPI (15 routers)
 │   ├── config.py                # Constantes y configuración
 │   ├── database.py              # Conexión TinyDB
 │   ├── models/
@@ -427,9 +444,11 @@ healthToPerformanceDB/
 │   │   ├── reproduction_ext.py  # /reproduction
 │   │   ├── lactation_router.py  # /lactation
 │   │   ├── health_ext_router.py # /health-ext
-│   │   └── group_movements.py   # /group-movements
+│   │   ├── group_movements.py   # /group-movements
+│   │   └── exports.py           # /exports/json, /exports/geojson
 │   ├── services/
 │   │   ├── crud_service.py          # Operaciones CRUD genéricas sobre TinyDB
+│   │   ├── export_service.py        # Lógica de exportación JSON y GeoJSON
 │   │   ├── resource_registry.py     # Mapa resourceType ↔ modelo Pydantic (70 entradas)
 │   │   └── validation_service.py    # Validación dual: Pydantic + JSON Schema
 │   ├── schemas/
@@ -446,7 +465,8 @@ healthToPerformanceDB/
 │   ├── test_events.py           # CRUD eventos
 │   ├── test_generic_resources.py # CRUD recursos genéricos
 │   ├── test_new_models.py       # Funcionalidad nuevos modelos (8 tests)
-│   └── test_jsonschema.py       # Validación JSON Schema (9 tests)
+│   ├── test_jsonschema.py       # Validación JSON Schema (9 tests)
+│   └── test_exports.py          # Exportación JSON y GeoJSON (9 tests)
 ├── requirements.txt
 ├── seed_data.py
 ├── run.py
@@ -522,7 +542,7 @@ Si el payload no cumple el JSON Schema, la API responde con `422` y los errores 
 
 - [ ] Implementar las enumeraciones ICAR (`AnimalSpecieType`, `AnimalGenderType`, etc.) como `enum` de Python
 - [ ] Soft delete mediante `meta.isDeleted`
-- [ ] Endpoints de exportación (JSON, GeoJSON, Excel)
+- [ ] Endpoints de exportación Excel
 - [ ] Autenticación mediante API key
 - [ ] Operaciones batch (creación/actualización masiva)
 - [ ] Migrar a SQLite vía SQLAlchemy para producción real
