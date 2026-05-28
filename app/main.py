@@ -20,6 +20,7 @@ from app.routers import (
     lactation_router,
     health_ext_router,
     group_movements,
+    exports,
 )
 
 app = FastAPI(
@@ -72,3 +73,4 @@ app.include_router(reproduction_ext.router)
 app.include_router(lactation_router.router)
 app.include_router(health_ext_router.router)
 app.include_router(group_movements.router)
+app.include_router(exports.router)
