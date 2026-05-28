@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.svg" alt="healthToPerformanceDB logo" width="600">
+</p>
+
 # healthToPerformanceDB
 
 API REST basada en **FastAPI + TinyDB** que implementa el modelo de datos **ICAR Animal Data Exchange (ADE) v1.5** para operaciones CRUD sobre recursos ganaderos: animales, eventos de peso, sanitarios, movimientos, reproducción, ordeño y agrupaciones.
