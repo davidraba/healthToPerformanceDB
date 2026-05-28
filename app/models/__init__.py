@@ -4,6 +4,8 @@ from .common import (
     IcarResource,
     IcarEventCoreResource,
     IcarAnimalEventCoreResource,
+    IcarGroupEventCoreResource,
+    IcarAnimalBaseResource,
 )
 from .animals import IcarAnimalCoreResource
 from .events import (
@@ -24,6 +26,79 @@ from .reproduction import IcarReproInseminationEventResource
 from .milking import IcarMilkingVisitEventResource
 from .groups import IcarAnimalSetResource
 from .resources import GenericIcarResource
+from .health_ext import (
+    IcarAttentionEventResource,
+    IcarDiagnosisEventResource,
+    IcarHealthStatusObservedEventResource,
+    IcarRemarkEventResource,
+    IcarWithdrawalEventResource,
+)
+from .feeds import (
+    IcarFeedResource,
+    IcarFeedStorageResource,
+    IcarFeedTransactionResource,
+    IcarFeedIntakeEventResource,
+    IcarFeedRecommendationResource,
+    IcarFeedReportResource,
+    IcarRationResource,
+    IcarGroupFeedingEventResource,
+)
+from .reproduction_ext import (
+    IcarReproAbortionEventResource,
+    IcarReproDoNotBreedEventResource,
+    IcarReproEmbryoFlushingEventResource,
+    IcarReproEmbryoResource,
+    IcarReproHeatEventResource,
+    IcarReproMatingRecommendationResource,
+    IcarReproParturitionEventResource,
+    IcarReproPregnancyCheckEventResource,
+    IcarReproSemenStrawResource,
+    IcarReproStatusObservedEventResource,
+    IcarGestationResource,
+)
+from .lactation import (
+    IcarLactationResource,
+    IcarLactationStatusObservedEventResource,
+    IcarMilkingDryOffEventResource,
+    IcarDailyMilkingAveragesResource,
+    IcarMilkPredictionResource,
+    IcarTestDayResource,
+    IcarTestDayResultEventResource,
+)
+from .carcass import (
+    IcarCarcassResource,
+    IcarCarcassObservationsEventResource,
+)
+from .genetics import (
+    IcarBreedingValueResource,
+    IcarProgenyDetailsResource,
+)
+from .group_events import (
+    IcarGroupMovementBirthEventResource,
+    IcarGroupMovementArrivalEventResource,
+    IcarGroupMovementDepartureEventResource,
+    IcarGroupMovementDeathEventResource,
+    IcarPositionObservationEventResource,
+    IcarGroupPositionObservationEventResource,
+)
+from .devices_ext import (
+    IcarDeviceResource,
+    IcarMedicineResource,
+    IcarMedicineTransactionResource,
+    IcarLocationResource,
+    IcarInventoryTransactionResource,
+)
+from .misc import (
+    IcarObservationSummaryResource,
+    IcarProcessingLotResource,
+    IcarStatisticsResource,
+    IcarSchemeTypeResource,
+    IcarSchemeValueResource,
+    IcarSortingSiteResource,
+    IcarAnimalSortingCommandResource,
+    IcarConformationScoreEventResource,
+    IcarTypeClassificationEventResource,
+)
 
 __all__ = [
     "IcarIdentifierType",
@@ -31,6 +106,8 @@ __all__ = [
     "IcarResource",
     "IcarEventCoreResource",
     "IcarAnimalEventCoreResource",
+    "IcarGroupEventCoreResource",
+    "IcarAnimalBaseResource",
     "IcarAnimalCoreResource",
     "IcarMovementBirthEventResource",
     "IcarMovementArrivalEventResource",
@@ -47,4 +124,59 @@ __all__ = [
     "IcarMilkingVisitEventResource",
     "IcarAnimalSetResource",
     "GenericIcarResource",
+    "IcarAttentionEventResource",
+    "IcarDiagnosisEventResource",
+    "IcarHealthStatusObservedEventResource",
+    "IcarRemarkEventResource",
+    "IcarWithdrawalEventResource",
+    "IcarFeedResource",
+    "IcarFeedStorageResource",
+    "IcarFeedTransactionResource",
+    "IcarFeedIntakeEventResource",
+    "IcarFeedRecommendationResource",
+    "IcarFeedReportResource",
+    "IcarRationResource",
+    "IcarGroupFeedingEventResource",
+    "IcarReproAbortionEventResource",
+    "IcarReproDoNotBreedEventResource",
+    "IcarReproEmbryoFlushingEventResource",
+    "IcarReproEmbryoResource",
+    "IcarReproHeatEventResource",
+    "IcarReproMatingRecommendationResource",
+    "IcarReproParturitionEventResource",
+    "IcarReproPregnancyCheckEventResource",
+    "IcarReproSemenStrawResource",
+    "IcarReproStatusObservedEventResource",
+    "IcarGestationResource",
+    "IcarLactationResource",
+    "IcarLactationStatusObservedEventResource",
+    "IcarMilkingDryOffEventResource",
+    "IcarDailyMilkingAveragesResource",
+    "IcarMilkPredictionResource",
+    "IcarTestDayResource",
+    "IcarTestDayResultEventResource",
+    "IcarCarcassResource",
+    "IcarCarcassObservationsEventResource",
+    "IcarBreedingValueResource",
+    "IcarProgenyDetailsResource",
+    "IcarGroupMovementBirthEventResource",
+    "IcarGroupMovementArrivalEventResource",
+    "IcarGroupMovementDepartureEventResource",
+    "IcarGroupMovementDeathEventResource",
+    "IcarPositionObservationEventResource",
+    "IcarGroupPositionObservationEventResource",
+    "IcarDeviceResource",
+    "IcarMedicineResource",
+    "IcarMedicineTransactionResource",
+    "IcarLocationResource",
+    "IcarInventoryTransactionResource",
+    "IcarObservationSummaryResource",
+    "IcarProcessingLotResource",
+    "IcarStatisticsResource",
+    "IcarSchemeTypeResource",
+    "IcarSchemeValueResource",
+    "IcarSortingSiteResource",
+    "IcarAnimalSortingCommandResource",
+    "IcarConformationScoreEventResource",
+    "IcarTypeClassificationEventResource",
 ]

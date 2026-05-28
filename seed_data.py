@@ -85,7 +85,121 @@ def seed():
         },
     )
 
-    print("Seed data inserted successfully.")
+    create(
+        "icarReproHeatEventResource",
+        {
+            "resourceType": "icarReproHeatEventResource",
+            "animal": ANIMAL,
+            "location": LOCATION,
+            "eventDateTime": "2026-06-01T07:00:00Z",
+            "heatDetectionMethod": "Visual",
+            "certainty": "High",
+        },
+    )
+
+    create(
+        "icarReproInseminationEventResource",
+        {
+            "resourceType": "icarReproInseminationEventResource",
+            "animal": ANIMAL,
+            "location": LOCATION,
+            "eventDateTime": "2026-06-01T14:00:00Z",
+            "remark": "First insemination",
+        },
+    )
+
+    create(
+        "icarReproPregnancyCheckEventResource",
+        {
+            "resourceType": "icarReproPregnancyCheckEventResource",
+            "animal": ANIMAL,
+            "location": LOCATION,
+            "eventDateTime": "2026-07-01T09:00:00Z",
+            "method": "Ultrasound",
+            "result": "Pregnant",
+        },
+    )
+
+    create(
+        "icarMilkingVisitEventResource",
+        {
+            "resourceType": "icarMilkingVisitEventResource",
+            "animal": ANIMAL,
+            "location": LOCATION,
+            "eventDateTime": "2027-01-15T06:00:00Z",
+            "remark": "Morning milking",
+        },
+    )
+
+    create(
+        "icarAttentionEventResource",
+        {
+            "resourceType": "icarAttentionEventResource",
+            "animal": ANIMAL,
+            "location": LOCATION,
+            "eventDateTime": "2026-03-18T08:00:00Z",
+            "category": "Health",
+            "causes": ["Digestive"],
+            "priority": "Medium",
+        },
+    )
+
+    create(
+        "icarFeedResource",
+        {
+            "resourceType": "icarFeedResource",
+            "id": "FEED-CALF-001",
+            "name": "Calf Starter Pellets",
+            "category": "Concentrate",
+            "location": LOCATION,
+            "active": True,
+        },
+    )
+
+    create(
+        "icarRationResource",
+        {
+            "resourceType": "icarRationResource",
+            "id": "RATION-CALF-001",
+            "name": "Calf rearing ration Q1",
+            "location": LOCATION,
+            "active": True,
+        },
+    )
+
+    create(
+        "icarDeviceResource",
+        {
+            "resourceType": "icarDeviceResource",
+            "id": "SCALE-001",
+            "serial": "SN-9420-X",
+            "name": "Weighing Scale Barn A",
+            "isActive": True,
+            "location": LOCATION,
+        },
+    )
+
+    create(
+        "icarMedicineResource",
+        {
+            "resourceType": "icarMedicineResource",
+            "name": "Oral electrolyte solution",
+            "approved": "Yes",
+            "location": LOCATION,
+        },
+    )
+
+    create(
+        "icarLocationResource",
+        {
+            "resourceType": "icarLocationResource",
+            "identifier": LOCATION,
+            "name": "La Vega Experimental Farm",
+            "timeZoneId": "Europe/Madrid",
+        },
+    )
+
+    print("Seed data inserted successfully with all resource type examples.")
 
 
 if __name__ == "__main__":

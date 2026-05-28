@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Body, Query
 from pydantic import ValidationError
 
 from app.services import crud_service
-from app.services.resource_registry import resolve_model
+from app.services.validation_service import validate_payload
 from app.utils.pagination import normalize_pagination
 
 DEVICE_TYPE = "icarDeviceResource"
@@ -14,6 +14,10 @@ router = APIRouter(prefix="/devices", tags=["Devices"])
 @router.post("")
 def create_device(payload: Dict[str, Any] = Body(...)):
     payload["resourceType"] = DEVICE_TYPE
+    try:
+        validate_payload(DEVICE_TYPE, payload)
+    except ValidationError as e:
+        raise HTTPException(422, {"error": "Validation failed", "details": e.errors()})
     doc = crud_service.create(DEVICE_TYPE, payload)
     return doc
 
@@ -31,3 +35,11 @@ def get_device(internal_id: str):
     if not item:
         raise HTTPException(404, "Device not found")
     return item
+
+
+@router.delete("/{internal_id}")
+def delete_device(internal_id: str):
+    deleted = crud_service.delete(DEVICE_TYPE, internal_id)
+    if not deleted:
+        raise HTTPException(404, "Device not found")
+    return {"deleted": True}

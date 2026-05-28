@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICAR ADE v1.5 API</title>
+  <style>
+    :root {
+      --primary: #1B4965;
+      --accent: #2E86AB;
+      --danger: #E63946;
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #6c757d;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+    }
+    header img { max-width: 400px; height: auto; margin-bottom: 1rem; }
+    header h1 { font-size: 1.8rem; font-weight: 700; }
+    header p { font-size: 1rem; opacity: 0.85; margin-top: 0.3rem; }
+    .container { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #e9ecef;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    .card h3 { font-size: 1rem; color: var(--accent); margin-bottom: 0.4rem; }
+    .card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    .card .badge {
+      display: inline-block;
+      background: #e7f3ff;
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.6rem;
+    }
+    a { text-decoration: none; color: inherit; }
+    .links {
+      display: flex; flex-wrap: wrap; gap: 0.8rem;
+      margin-top: 1.5rem; justify-content: center;
+    }
+    .links a {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--card);
+      border: 1px solid #dee2e6;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .links a:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    section { margin-top: 2rem; }
+    section h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid #e9ecef;
+    }
+    .route-list { list-style: none; }
+    .route-list li {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.5rem 0.8rem;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.85rem;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+    .method {
+      font-weight: 700; font-size: 0.75rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      min-width: 48px;
+      text-align: center;
+    }
+    .get { background: #d3f0fe; color: #0a6e9b; }
+    .post { background: #d4edda; color: #155724; }
+    .put { background: #ffeeba; color: #856404; }
+    .delete { background: #f8d7da; color: #721c24; }
+    .path { color: var(--text); }
+    .desc { color: var(--muted); font-family: 'Segoe UI', sans-serif; font-size: 0.8rem; }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid #e9ecef;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="/static/logo.svg" alt="healthToPerformanceDB logo">
+    <h1>ICAR ADE v1.5 API</h1>
+    <p>REST API for ICAR Animal Data Exchange ADE v1.5 using FastAPI and TinyDB</p>
+  </header>
+
+  <div class="container">
+    <div class="links">
+      <a href="/docs">📘 Swagger UI</a>
+      <a href="/redoc">📄 ReDoc</a>
+      <a href="/healthcheck">💚 Healthcheck</a>
+      <a href="https://github.com/adewg/ICAR" target="_blank"> GitHub</a>
+    </div>
+
+    <section>
+      <h2>Resources</h2>
+      <div class="cards">
+        <a class="card" href="/animals">
+          <h3>🐄 Animals</h3>
+          <p>CRUD for animal resources: create, list, get, update, delete animals with ICAR ADE payloads.</p>
+          <span class="badge">icarAnimalCoreResource</span>
+        </a>
+        <a class="card" href="/events">
+          <h3>📅 Events</h3>
+          <p>CRUD for events linked to animals: weight, treatment, reproduction, health, movement, milking, etc.</p>
+          <span class="badge">20+ event types</span>
+        </a>
+        <a class="card" href="/groups">
+          <h3>👥 Groups</h3>
+          <p>CRUD for animal groups and group-level events (feedings, movements, treatments, weights).</p>
+          <span class="badge">icarAnimalSetResource</span>
+        </a>
+        <a class="card" href="/devices">
+          <h3>📡 Devices</h3>
+          <p>CRUD for devices: sensors, collars, ear-tag readers and other hardware identifiers.</p>
+          <span class="badge">icarDeviceResource</span>
+        </a>
+        <a class="card" href="/medicines">
+          <h3>💊 Medicines</h3>
+          <p>CRUD for medicines and pharmaceutical products used in treatments.</p>
+          <span class="badge">icarMedicineResource</span>
+        </a>
+        <a class="card" href="/locations">
+          <h3>📍 Locations</h3>
+          <p>CRUD for locations: farms, barns, pens, feedlots and other physical locations.</p>
+          <span class="badge">icarLocationResource</span>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2>API Routes</h2>
+      <ul class="route-list">
+        <li><span class="method get">GET</span><span class="path">/resources</span><span class="desc">List registered resource types</span></li>
+        <li><span class="method post">POST</span><span class="path">/resources</span><span class="desc">Create any resource type generically</span></li>
+        <li><span class="method get">GET</span><span class="path">/resources/{id}</span><span class="desc">Get any resource by ID</span></li>
+        <li><span class="method get">GET</span><span class="path">/animals</span><span class="desc">List animals</span></li>
+        <li><span class="method post">POST</span><span class="path">/animals</span><span class="desc">Create animal</span></li>
+        <li><span class="method get">GET</span><span class="path">/animals/{id}</span><span class="desc">Get animal by ID</span></li>
+        <li><span class="method put">PUT</span><span class="path">/animals/{id}</span><span class="desc">Update animal</span></li>
+        <li><span class="method delete">DELETE</span><span class="path">/animals/{id}</span><span class="desc">Delete animal</span></li>
+        <li><span class="method post">POST</span><span class="path">/events</span><span class="desc">Create an event for an animal</span></li>
+        <li><span class="method get">GET</span><span class="path">/events?animalId={id}</span><span class="desc">List events for an animal</span></li>
+        <li><span class="method get">GET</span><span class="path">/events/{id}</span><span class="desc">Get event by ID</span></li>
+        <li><span class="method get">GET</span><span class="path">/healthcheck</span><span class="desc">API health status</span></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Supported Events</h2>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:0.8rem;">
+        The API supports 20+ ICAR ADE event types for animal tracking:
+      </p>
+      <div class="cards">
+        <div class="card"><h3>⚖️ WeightEvent</h3><p>Individual animal weight observations.</p></div>
+        <div class="card"><h3>💉 TreatmentEvent</h3><p>Individual treatments and medication administration.</p></div>
+        <div class="card"><h3>💊 MedicineTransaction</h3><p>Medicine usage tracking per animal.</p></div>
+        <div class="card"><h3>🫃 Repro. events</h3><p>Heat, insemination, pregnancy check, parturition, abortion, etc.</p></div>
+        <div class="card"><h3>🚚 Movement events</h3><p>Arrival, departure, birth, death.</p></div>
+        <div class="card"><h3>🥛 Milking events</h3><p>Milking visits, dry-off, daily averages, test-day results.</p></div>
+        <div class="card"><h3>🩺 Health events</h3><p>Diagnosis, health status observation, attention.</p></div>
+        <div class="card"><h3>🐑 Group events</h3><p>Group feeding, weight, treatment, movement, position observation.</p></div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    ICAR Animal Data Exchange (ADE) — <a href="https://github.com/adewg/ICAR" target="_blank" style="color:var(--accent)">github.com/adewg/ICAR</a>
+    &nbsp;·&nbsp; Version 1.0.0 &nbsp;·&nbsp; Apache 2.0 License
+  </footer>
+</body>
+</html>

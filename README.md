@@ -302,26 +302,30 @@ healthToPerformanceDB/
 └── README.md
 ```
 
-## Tipos de recurso soportados
+## Tipos de recurso soportados (70 types)
 
-| resourceType | Modelo Pydantic | Endpoint específico |
-|---|---|---|
-| `icarAnimalCoreResource` | `IcarAnimalCoreResource` | `/animals` |
-| `icarMovementBirthEventResource` | `IcarMovementBirthEventResource` | `/events` |
-| `icarMovementArrivalEventResource` | `IcarMovementArrivalEventResource` | `/events` |
-| `icarMovementDepartureEventResource` | `IcarMovementDepartureEventResource` | `/events` |
-| `icarMovementDeathEventResource` | `IcarMovementDeathEventResource` | `/events` |
-| `icarWeightEventResource` | `IcarWeightEventResource` | `/weights`, `/events` |
-| `icarGroupWeightEventResource` | `IcarGroupWeightEventResource` | `/weights`, `/events` |
-| `icarTreatmentEventResource` | `IcarTreatmentEventResource` | `/health/treatments`, `/events` |
-| `icarTreatmentProgramEventResource` | `IcarTreatmentProgramEventResource` | `/health/treatment-programs`, `/events` |
-| `icarGroupTreatmentEventResource` | `IcarGroupTreatmentEventResource` | `/events` |
-| `icarAnimalSetJoinEventResource` | `IcarAnimalSetJoinEventResource` | `/events` |
-| `icarAnimalSetLeaveEventResource` | `IcarAnimalSetLeaveEventResource` | `/events` |
-| `icarReproInseminationEventResource` | `IcarReproInseminationEventResource` | `/events` |
-| `icarMilkingVisitEventResource` | `IcarMilkingVisitEventResource` | `/events` |
-| `icarAnimalSetResource` | `IcarAnimalSetResource` | `/groups` |
-| *cualquier otro* | `GenericIcarResource` (tolerante) | `/resources` |
+Todos los tipos del catálogo [adewg/ICAR ADE v1.5](https://github.com/adewg/ICAR/tree/ADE-1/resources) tienen modelo Pydantic dedicado.
+
+| Categoría | Tipos modelados | Endpoints |
+|-----------|----------------|-----------|
+| **Animal** | `icarAnimalCoreResource` | `/animals` |
+| **Movimiento individual** | `icarMovementBirthEventResource`, `icarMovementArrivalEventResource`, `icarMovementDepartureEventResource`, `icarMovementDeathEventResource` | `/events` |
+| **Movimiento grupal** | `icarGroupMovementBirthEventResource`, `icarGroupMovementArrivalEventResource`, `icarGroupMovementDepartureEventResource`, `icarGroupMovementDeathEventResource`, `icarGroupPositionObservationEventResource`, `icarPositionObservationEventResource` | `/group-movements`, `/events` |
+| **Pesos** | `icarWeightEventResource`, `icarGroupWeightEventResource` | `/weights`, `/events` |
+| **Sanidad** | `icarTreatmentEventResource`, `icarTreatmentProgramEventResource`, `icarGroupTreatmentEventResource`, `icarAttentionEventResource`, `icarDiagnosisEventResource`, `icarHealthStatusObservedEventResource`, `icarRemarkEventResource`, `icarWithdrawalEventResource` | `/health`, `/health-ext`, `/events` |
+| **Reproducción** | `icarReproInseminationEventResource`, `icarReproAbortionEventResource`, `icarReproDoNotBreedEventResource`, `icarReproEmbryoFlushingEventResource`, `icarReproEmbryoResource`, `icarReproHeatEventResource`, `icarReproMatingRecommendationResource`, `icarReproParturitionEventResource`, `icarReproPregnancyCheckEventResource`, `icarReproSemenStrawResource`, `icarReproStatusObservedEventResource`, `icarGestationResource` | `/reproduction`, `/events` |
+| **Ordeño / Lactación** | `icarMilkingVisitEventResource`, `icarMilkingDryOffEventResource`, `icarLactationResource`, `icarLactationStatusObservedEventResource`, `icarDailyMilkingAveragesResource`, `icarMilkPredictionResource`, `icarTestDayResource`, `icarTestDayResultEventResource` | `/lactation`, `/events` |
+| **Alimentación** | `icarFeedResource`, `icarFeedStorageResource`, `icarFeedTransactionResource`, `icarFeedIntakeEventResource`, `icarFeedRecommendationResource`, `icarFeedReportResource`, `icarRationResource`, `icarGroupFeedingEventResource` | `/feeding`, `/events` |
+| **Genética** | `icarBreedingValueResource`, `icarProgenyDetailsResource` | `/resources` |
+| **Canal / Sacrificio** | `icarCarcassResource`, `icarCarcassObservationsEventResource` | `/resources` |
+| **Conformación** | `icarConformationScoreEventResource`, `icarTypeClassificationEventResource` | `/resources` |
+| **Dispositivos** | `icarDeviceResource` | `/devices` |
+| **Medicamentos** | `icarMedicineResource`, `icarMedicineTransactionResource` | `/medicines` |
+| **Ubicaciones** | `icarLocationResource`, `icarInventoryTransactionResource` | `/locations` |
+| **Catálogo** | `icarSchemeTypeResource`, `icarSchemeValueResource`, `icarSortingSiteResource`, `icarAnimalSortingCommandResource` | `/resources` |
+| **Estadísticas** | `icarStatisticsResource`, `icarObservationSummaryResource`, `icarProcessingLotResource` | `/resources` |
+| **Grupos** | `icarAnimalSetResource` | `/groups` |
+| *fallback* | `GenericIcarResource` (tolerante) | `/resources` |
 
 ## Inspeccionar TinyDB
 
@@ -341,7 +345,7 @@ python -c "from tinydb import TinyDB; db = TinyDB('data/tinydb.json'); print(db.
 - Sin integridad referencial entre recursos
 - Paginación por `offset`/`limit` (no cursor-based)
 - Sin búsqueda de texto completo
-- Los 16 resource types modelados son un subconjunto del completo ICAR ADE v1.5
+- Los 70 resource types modelados cubren la totalidad del catálogo ICAR ADE v1.5
 
 ## Próximos pasos
 
