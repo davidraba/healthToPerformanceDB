@@ -38,7 +38,7 @@ python run.py
 python seed_data.py
 ```
 
-Inserta datos de ejemplo coherentes: nacimiento de ternera → ficha animal → peso neonatal → tratamiento por diarrea → agrupación en lote de recría → pesada de grupo.
+Inserta 17 recursos de ejemplo: nacimiento de ternera → ficha animal → peso neonatal → tratamiento por diarrea → agrupación → pesada de grupo → celo → inseminación → diagnóstico de gestación → ordeño → alerta → alimentación → dispositivo → medicamento → ubicación.
 
 ## Documentación interactiva
 
@@ -232,24 +232,157 @@ curl http://localhost:8000/groups
 ### Dispositivos / Medicamentos / Ubicaciones
 
 ```bash
+# Dispositivo (validado con modelo Pydantic)
 curl -X POST http://localhost:8000/devices \
   -H "Content-Type: application/json" \
-  -d '{"deviceType": "Ear tag RFID", "serialNumber": "RF-9420"}'
+  -d '{"id": "SCALE-001", "serial": "RF-9420", "name": "Báscula nave A", "isActive": true}'
 
+# Medicamento
 curl -X POST http://localhost:8000/medicines \
   -H "Content-Type: application/json" \
-  -d '{"name": "Electrolitos orales", "activeIngredient": "Sodio, potasio, glucosa"}'
+  -d '{"name": "Electrolitos orales", "approved": "Yes"}'
 
+# Ubicación
 curl -X POST http://localhost:8000/locations \
   -H "Content-Type: application/json" \
-  -d '{"name": "Explotación La Vega"}'
+  -d '{"identifier": {"scheme": "es.rea", "id": "ES430000001"}, "name": "Explotación La Vega"}'
 ```
 
-## Tests
+### Reproducción
+
+```bash
+# Evento de celo
+curl -X POST http://localhost:8000/reproduction \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarReproHeatEventResource",
+    "animal": {"scheme": "es.magrama.bovine", "id": "ES091234567890"},
+    "eventDateTime": "2026-06-01T07:00:00Z",
+    "heatDetectionMethod": "Visual",
+    "certainty": "High"
+  }'
+
+# Diagnóstico de gestación
+curl -X POST http://localhost:8000/reproduction \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarReproPregnancyCheckEventResource",
+    "animal": {"scheme": "es.magrama.bovine", "id": "ES091234567890"},
+    "eventDateTime": "2026-07-01T09:00:00Z",
+    "method": "Ultrasound",
+    "result": "Pregnant"
+  }'
+
+# Eventos de reproducción por animal
+curl http://localhost:8000/reproduction/by-animal/es.magrama.bovine/ES091234567890
+```
+
+### Alimentación
+
+```bash
+# Crear un alimento
+curl -X POST http://localhost:8000/feeding \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarFeedResource",
+    "id": "FEED-001",
+    "name": "Pienso iniciación terneros",
+    "active": true
+  }'
+
+# Ración
+curl -X POST http://localhost:8000/feeding \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarRationResource",
+    "id": "RATION-001",
+    "name": "Ración recría Q1",
+    "active": true
+  }'
+```
+
+### Lactación
+
+```bash
+# Recurso de lactación
+curl -X POST http://localhost:8000/lactation \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarLactationResource",
+    "id": "LACT-001",
+    "animal": {"scheme": "es.magrama.bovine", "id": "ES091234567890"},
+    "parity": 1
+  }'
+
+# Promedios diarios de ordeño
+curl -X POST http://localhost:8000/lactation \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarDailyMilkingAveragesResource",
+    "animal": {"scheme": "es.magrama.bovine", "id": "ES091234567890"},
+    "averageDate": "2027-01-15"
+  }'
+```
+
+### Eventos de salud extendidos
+
+```bash
+# Alerta sanitaria
+curl -X POST http://localhost:8000/health-ext \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarAttentionEventResource",
+    "animal": {"scheme": "es.magrama.bovine", "id": "ES091234567890"},
+    "eventDateTime": "2026-03-18T08:00:00Z",
+    "category": "Health",
+    "causes": ["Digestive"],
+    "priority": "Medium"
+  }'
+
+# Diagnóstico
+curl -X POST http://localhost:8000/health-ext \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarDiagnosisEventResource",
+    "animal": {"scheme": "es.magrama.bovine", "id": "ES091234567890"},
+    "eventDateTime": "2026-03-18T10:00:00Z"
+  }'
+
+# Eventos de salud por animal
+curl http://localhost:8000/health-ext/by-animal/es.magrama.bovine/ES091234567890
+```
+
+### Movimientos grupales
+
+```bash
+# Llegada de lote
+curl -X POST http://localhost:8000/group-movements \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resourceType": "icarGroupMovementArrivalEventResource",
+    "location": {"scheme": "es.rea", "id": "ES430000001"},
+    "eventDateTime": "2026-03-15T10:00:00Z",
+    "groupMethod": "InventoryClassification",
+    "arrivalReason": "Purchase"
+  }'
+
+# Movimientos por ubicación
+curl http://localhost:8000/group-movements/by-location/es.rea/ES430000001
+```
+
+## Tests (31 tests)
 
 ```bash
 pytest tests/ -v
 ```
+
+| Fichero | Tests | Descripción |
+|---------|-------|-------------|
+| `test_animals.py` | 5 | CRUD animales, duplicados, 404 |
+| `test_events.py` | 4 | Creación, listado, filtros, borrado eventos |
+| `test_generic_resources.py` | 5 | CRUD genérico, tipos, validación resourceType |
+| `test_new_models.py` | 8 | Funcionalidad nuevos modelos y routers |
+| `test_jsonschema.py` | 9 | Validación JSON Schema, endpoint /schemas |
 
 ## Estructura del proyecto
 
@@ -257,48 +390,67 @@ pytest tests/ -v
 healthToPerformanceDB/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py              # Punto de entrada FastAPI
-│   ├── config.py             # Constantes y configuración
-│   ├── database.py           # Conexión TinyDB
+│   ├── main.py                  # Punto de entrada FastAPI (14 routers)
+│   ├── config.py                # Constantes y configuración
+│   ├── database.py              # Conexión TinyDB
 │   ├── models/
-│   │   ├── common.py         # IcarIdentifierType, IcarMetaDataType, IcarResource, clases base
-│   │   ├── animals.py        # IcarAnimalCoreResource
-│   │   ├── events.py         # Eventos de movimiento (birth, arrival, departure, death, set join/leave)
-│   │   ├── health.py         # Treatment, TreatmentProgram, GroupTreatment
-│   │   ├── weights.py        # WeightEvent, GroupWeightEvent
-│   │   ├── reproduction.py   # ReproInseminationEvent
-│   │   ├── milking.py        # MilkingVisitEvent
-│   │   ├── groups.py         # AnimalSetResource
-│   │   └── resources.py      # GenericIcarResource (fallback)
+│   │   ├── __init__.py          # Re-exporta los 70+ modelos
+│   │   ├── common.py            # Clases base (IcarResource, IcarEventCoreResource, etc.)
+│   │   ├── animals.py           # IcarAnimalCoreResource
+│   │   ├── events.py            # Movimiento individual (birth, arrival, departure, death, set join/leave)
+│   │   ├── health.py            # Treatment, TreatmentProgram, GroupTreatment
+│   │   ├── weights.py           # WeightEvent, GroupWeightEvent
+│   │   ├── reproduction.py      # ReproInseminationEvent
+│   │   ├── milking.py           # MilkingVisitEvent
+│   │   ├── groups.py            # AnimalSetResource
+│   │   ├── resources.py         # GenericIcarResource (fallback)
+│   │   ├── health_ext.py        # AttentionEvent, DiagnosisEvent, HealthStatusObserved, RemarkEvent, WithdrawalEvent
+│   │   ├── feeds.py             # Feed, FeedStorage, FeedTransaction, FeedIntakeEvent, Ration, GroupFeedingEvent
+│   │   ├── reproduction_ext.py  # Abortion, DoNotBreed, Embryo, Heat, Gestation, SemenStraw, PregnancyCheck, Parturition...
+│   │   ├── lactation.py         # Lactation, DailyMilkingAverages, MilkPrediction, TestDay, TestDayResult, MilkingDryOff
+│   │   ├── carcass.py           # Carcass, CarcassObservationsEvent
+│   │   ├── genetics.py          # BreedingValue, ProgenyDetails
+│   │   ├── group_events.py      # GroupMovement (birth/arrival/departure/death), PositionObservation
+│   │   ├── devices_ext.py       # Device, Medicine, MedicineTransaction, Location, InventoryTransaction
+│   │   └── misc.py              # ObservationSummary, ProcessingLot, Statistics, SchemeType/Value, Sorting, Conformation
 │   ├── routers/
-│   │   ├── animals.py        # /animals
-│   │   ├── events.py         # /events
-│   │   ├── generic_resources.py  # /resources
-│   │   ├── groups.py         # /groups
-│   │   ├── devices.py        # /devices
-│   │   ├── medicines.py      # /medicines
-│   │   ├── locations.py      # /locations
-│   │   ├── health.py         # /health
-│   │   └── weights.py        # /weights
+│   │   ├── animals.py           # /animals
+│   │   ├── events.py            # /events
+│   │   ├── generic_resources.py # /resources + /resources/schemas/{type}
+│   │   ├── groups.py            # /groups
+│   │   ├── devices.py           # /devices
+│   │   ├── medicines.py         # /medicines
+│   │   ├── locations.py         # /locations
+│   │   ├── health.py            # /health/treatments, /health/treatment-programs
+│   │   ├── weights.py           # /weights
+│   │   ├── feeds.py             # /feeding
+│   │   ├── reproduction_ext.py  # /reproduction
+│   │   ├── lactation_router.py  # /lactation
+│   │   ├── health_ext_router.py # /health-ext
+│   │   └── group_movements.py   # /group-movements
 │   ├── services/
-│   │   ├── crud_service.py       # Operaciones CRUD genéricas sobre TinyDB
-│   │   ├── resource_registry.py  # Mapa resourceType ↔ modelo Pydantic
-│   │   └── validation_service.py # Validación dinámica de payloads
+│   │   ├── crud_service.py          # Operaciones CRUD genéricas sobre TinyDB
+│   │   ├── resource_registry.py     # Mapa resourceType ↔ modelo Pydantic (70 entradas)
+│   │   └── validation_service.py    # Validación dual: Pydantic + JSON Schema
 │   ├── schemas/
-│   │   └── validators.py    # Validación de estructura JSON
+│   │   ├── validators.py        # Validación de estructura estática
+│   │   └── json_validator.py    # Generación y validación JSON Schema (Draft 2020-12)
 │   └── utils/
-│       ├── ids.py            # Generación de UUIDs
-│       ├── dates.py          # Timestamps ISO 8601
-│       └── pagination.py     # Normalización limit/offset
+│       ├── ids.py               # Generación de UUIDs
+│       ├── dates.py             # Timestamps ISO 8601
+│       └── pagination.py        # Normalización limit/offset
 ├── data/
-│   └── tinydb.json           # Base de datos (se crea automáticamente)
+│   └── tinydb.json              # Base de datos (se crea automáticamente)
 ├── tests/
-│   ├── test_animals.py
-│   ├── test_events.py
-│   └── test_generic_resources.py
+│   ├── test_animals.py          # CRUD animales
+│   ├── test_events.py           # CRUD eventos
+│   ├── test_generic_resources.py # CRUD recursos genéricos
+│   ├── test_new_models.py       # Funcionalidad nuevos modelos (8 tests)
+│   └── test_jsonschema.py       # Validación JSON Schema (9 tests)
 ├── requirements.txt
 ├── seed_data.py
 ├── run.py
+├── logo.svg
 └── README.md
 ```
 
